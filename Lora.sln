@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora", "Lora\Lora.csproj", "{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora.Communication", "Lora.Communication\Lora.Communication.csproj", "{A4A7409F-F414-4305-AE73-E100EA797D4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora.Contracts", "Lora.Contracts\Lora.Contracts.csproj", "{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A7409F-F414-4305-AE73-E100EA797D4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A7409F-F414-4305-AE73-E100EA797D4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A7409F-F414-4305-AE73-E100EA797D4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A7409F-F414-4305-AE73-E100EA797D4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
