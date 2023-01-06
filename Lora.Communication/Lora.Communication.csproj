@@ -25,4 +25,8 @@
     <ItemGroup>
       <Folder Include="Enums" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="Lora.Test" />
+    </ItemGroup>
 </Project>

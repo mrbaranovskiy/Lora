@@ -1,11 +1,27 @@
 ﻿using System;
 using System.Buffers;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MCP.Communication.Misc;
 
 public static class MemExt
 {
+    public static T[] CombineArray<T>(this T[] a, T[] b)
+    {
+        if (a == null) throw new ArgumentNullException(nameof(a));
+        if (b == null) throw new ArgumentNullException(nameof(b));
+        if (a.Length == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(a));
+        if (b.Length == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(b));
+
+        var newArr = new T[a.Length + b.Length];
+        Array.Copy(a, newArr, a.Length);
+        Array.Copy(b, 0, newArr, a.Length, b.Length);
+
+        return newArr;
+    }
+
+
     public static void CopyTo<T>(this Span<T> span, Memory<T> to, int idx)
     {
         if (span.Length + idx > to.Length)

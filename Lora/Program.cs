@@ -1,15 +1,6 @@
 ﻿using System.IO.Ports;
 using System.Reactive.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using MCP.Communication.TransportLayer;
-using MCP.Communication.TransportLayer.Transport;
-
-const string Start = "{s}";
-const string End = "{e}";
-const string Failed = "{f}";
-const string Ack = "{ack}";
-const string AppendPattern = "{{a}}{0}";
+using MCP.Communication.Misc;
 
 var portIndex = IndexOfArg(args, "port");
 
@@ -25,7 +16,6 @@ if (args.Length < 2)
     return;
 }
 
-
 var sp = new SerialPort(args[portIndex + 1], 9600);
 var source = Observable.FromEventPattern<SerialDataReceivedEventHandler, SerialDataReceivedEventArgs>(h => sp.DataReceived += h,
     h => sp.DataReceived -= h);
@@ -33,46 +23,58 @@ sp.Open();
 
 var list = new List<byte>();
 
-source.Subscribe(s =>
+byte[] ReadSerialData(int s)
 {
-    var spBytesToRead = sp.BytesToRead;
-    if (spBytesToRead <= 0) return;
-    
-    var buffer = new byte[spBytesToRead];
-    sp.Read(buffer, 0, spBytesToRead);
+    var buffer = new byte[s];
+    sp.Read(buffer, 0, s);
+    return buffer;
+}
+
+void SendData(byte[] data)
+{
+    sp.Write(data, 0, data.Length);
+}
+
+source
+    .Select(_ => sp.BytesToRead)
+    .Where(s=> s > 0)
+    .Select(ReadSerialData).Subscribe(buffer =>
+{
     
     list.AddRange(buffer);
 
-    var result = CheckMessage();
-
-    switch (result.status)
+    try
     {
-        case MessageStatus.Received:
-        {
-            Console.Out.WriteLine($"MSG: {result.msg}");
-            sp.WriteLine(Ack);
-            list.Clear();
-            break;
-        }
-        case MessageStatus.Receiving:      
-            break;
-        case MessageStatus.Failed:
-            // Console.BackgroundColor = ConsoleColor.DarkRed;
-            // Console.Out.WriteLine("Failed message");
-            // Console.BackgroundColor = ConsoleColor.White;
-            break;
-        case MessageStatus.FailedReceived:
-            Console.Out.WriteLine("Repeat");
-            list.Clear();
-            break;
-        case MessageStatus.AckReceived:
-            Console.Out.WriteLine("Message sent");
-            list.Clear();
-            break;
-        default:
-            throw new ArgumentOutOfRangeException();
-    }
+        var result = HandleMessage();
 
+        switch (result.Status)
+        {
+            case MessageStatus.Send:
+            {
+                Console.Out.WriteLine($"MSG: {result.MessageBody}");
+                //Send the ack response
+                SendData(LoraMessageUtils.AckMessage(0));
+                list.Clear();
+                break;
+            }
+            case MessageStatus.Failed:
+                break;
+            case MessageStatus.FailedReceived:
+                Console.Out.WriteLine("Repeat");
+                list.Clear();
+                break;
+            case MessageStatus.Ack:
+                Console.Out.WriteLine("Message sent");
+                list.Clear();
+                break;
+            case MessageStatus.Receiving:
+                break;
+        }
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("general error!");
+    }
 });
 
 while (true)
@@ -82,40 +84,29 @@ while (true)
 
     if (readLine is { } && !string.IsNullOrEmpty(readLine))
     {
-        sp.WriteLine(WrapMessage(readLine));
+        var msg = LoraMessageUtils.SendMessage(readLine, 0);
+        sp.Write(msg, 0, msg.Length);
     }
 }
 
-
-string WrapMessage(string msg)
+LoraMessage HandleMessage()
 {
-    return $"{Start}{msg}{End}";
-}
-
-(MessageStatus status, string msg) CheckMessage()
-{
-    var array = list.ToArray();
-    var str = Encoding.UTF8.GetString(array);
-    var idxStart = str.IndexOf(Start);
-    var idxEnd = str.IndexOf(End);
+    var raw = list.ToArray();
+    
+    var idxStart = raw.IndexOfSubsequenceLast(LoraMessageUtils.StartPattern);
+    var idxEnd = raw.IndexOfSubsequenceLast(LoraMessageUtils.EndPattern);
 
     if (idxStart != -1 && idxEnd == -1)
-        return (MessageStatus.Receiving, null!);
+        return new LoraMessage {Status = MessageStatus.Receiving};
     if (idxStart != -1 && idxEnd != -1 && idxEnd <= idxStart)
-        return (MessageStatus.Failed, null!);
-    if (idxStart != -1 && idxEnd != -1 && idxEnd > idxStart)
-    {
-        var sub = str.Substring(idxStart + 3, idxEnd - idxStart - 3);
-        return (MessageStatus.Received,sub);
-    }
+        return new LoraMessage {Status = MessageStatus.Failed};
+    if (idxStart == -1 || idxEnd == -1 || idxEnd <= idxStart) 
+        return new LoraMessage() {Status = MessageStatus.Failed};
     
-    if (str.IndexOf(Ack) != -1)
-        return (MessageStatus.AckReceived, null!);
+    var end = idxEnd + (LoraMessageUtils.EndPattern.Length );
+    var sp = raw.AsSpan(idxStart..end);
 
-    if (str.IndexOf(Failed) != -1)
-        return (MessageStatus.FailedReceived, null!);
-
-    return (MessageStatus.Failed, null!);
+    return LoraMessageUtils.DeserializeWrapped(sp);
 }
 
 
@@ -128,13 +119,4 @@ int IndexOfArg(string[] args, string arg)
     }
 
     return -1;
-}
-
-enum MessageStatus
-{
-    Received,
-    Receiving, 
-    Failed, 
-    FailedReceived, 
-    AckReceived,
 }
