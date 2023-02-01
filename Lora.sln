@@ -2,10 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora", "Lora\Lora.csproj", "{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora.Communication", "Lora.Communication\Lora.Communication.csproj", "{A4A7409F-F414-4305-AE73-E100EA797D4A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora.Contracts", "Lora.Contracts\Lora.Contracts.csproj", "{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora.Test", "Lora.Test\Lora.Test.csproj", "{F10C61EA-85D4-4A06-B7FE-5F7A6EDBD349}"
 EndProject
 Global
@@ -18,14 +14,6 @@ Global
 		{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02DAE21E-6D7F-40E0-929A-2A67560DBC6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A4A7409F-F414-4305-AE73-E100EA797D4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A4A7409F-F414-4305-AE73-E100EA797D4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A4A7409F-F414-4305-AE73-E100EA797D4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A4A7409F-F414-4305-AE73-E100EA797D4A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53C1FEA7-CE56-48D4-B7C0-D6ABB53FC641}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F10C61EA-85D4-4A06-B7FE-5F7A6EDBD349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F10C61EA-85D4-4A06-B7FE-5F7A6EDBD349}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F10C61EA-85D4-4A06-B7FE-5F7A6EDBD349}.Release|Any CPU.ActiveCfg = Release|Any CPU

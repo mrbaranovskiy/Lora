@@ -1,5 +1,6 @@
 ﻿using System.IO.Ports;
 using System.Reactive.Linq;
+using System.Runtime.Intrinsics.Arm;
 using MCP.Communication.Misc;
 
 var portIndex = IndexOfArg(args, "port");
@@ -30,10 +31,7 @@ byte[] ReadSerialData(int s)
     return buffer;
 }
 
-void SendData(byte[] data)
-{
-    sp.Write(data, 0, data.Length);
-}
+void SendData(byte[] data) { sp.Write(data, 0, data.Length); }
 
 source
     .Select(_ => sp.BytesToRead)
@@ -51,7 +49,7 @@ source
         {
             case MessageStatus.Send:
             {
-                Console.Out.WriteLine($"MSG: {result.MessageBody}");
+                Console.Out.WriteLine($"MSG: {result.Body}");
                 //Send the ack response
                 SendData(LoraMessageUtils.AckMessage(0));
                 list.Clear();

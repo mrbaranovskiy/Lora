@@ -51,7 +51,7 @@ public static class LoraMessageUtils
         {
             Status = status,
             User = userid, 
-            MessageBody = body
+            Body = body
         });
     }
 
