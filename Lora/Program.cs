@@ -1,7 +1,7 @@
 ﻿using System.IO.Ports;
 using System.Reactive.Linq;
-using System.Runtime.Intrinsics.Arm;
 using MCP.Communication.Misc;
+using MCP.Communication.TransportLayer;
 
 var portIndex = IndexOfArg(args, "port");
 
@@ -22,8 +22,7 @@ var source = Observable.FromEventPattern<SerialDataReceivedEventHandler, SerialD
     h => sp.DataReceived -= h);
 sp.Open();
 
-var list = new List<byte>();
-
+var _cib = new CirBuffer<byte>(1024);
 byte[] ReadSerialData(int s)
 {
     var buffer = new byte[s];
@@ -31,39 +30,40 @@ byte[] ReadSerialData(int s)
     return buffer;
 }
 
-void SendData(byte[] data) { sp.Write(data, 0, data.Length); }
-
 source
     .Select(_ => sp.BytesToRead)
     .Where(s=> s > 0)
     .Select(ReadSerialData).Subscribe(buffer =>
 {
     
-    list.AddRange(buffer);
+    foreach (var b in buffer){ _cib.Push(b); }
 
+    if(_cib.DataLen == 0) return;
+    
     try
     {
-        var result = HandleMessage();
+        var data = _cib.Pop(_cib.DataLen);
+        
+        var result = HandleMessage(data);
 
         switch (result.Status)
         {
             case MessageStatus.Send:
             {
                 Console.Out.WriteLine($"MSG: {result.Body}");
-                //Send the ack response
                 SendData(LoraMessageUtils.AckMessage(0));
-                list.Clear();
+                _cib.RemoveAll();
                 break;
             }
             case MessageStatus.Failed:
                 break;
             case MessageStatus.FailedReceived:
                 Console.Out.WriteLine("Repeat");
-                list.Clear();
+                _cib.RemoveAll();
                 break;
             case MessageStatus.Ack:
                 Console.Out.WriteLine("Message sent");
-                list.Clear();
+                _cib.RemoveAll();
                 break;
             case MessageStatus.Receiving:
                 break;
@@ -73,6 +73,8 @@ source
     {
         Console.WriteLine("general error!");
     }
+    
+    void SendData(byte[] data) { sp.Write(data, 0, data.Length); }
 });
 
 while (true)
@@ -87,22 +89,23 @@ while (true)
     }
 }
 
-LoraMessage HandleMessage()
+LoraMessage HandleMessage(byte[] data)
 {
-    var raw = list.ToArray();
-    
-    var idxStart = raw.IndexOfSubsequenceLast(LoraMessageUtils.StartPattern);
-    var idxEnd = raw.IndexOfSubsequenceLast(LoraMessageUtils.EndPattern);
+    if (data == null) throw new ArgumentNullException(nameof(data));
+    if (data.Length == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(data));
+
+    var idxStart = data.IndexOfSubsequenceLast(LoraMessageUtils.StartPattern);
+    var idxEnd = data.IndexOfSubsequenceLast(LoraMessageUtils.EndPattern);
 
     if (idxStart != -1 && idxEnd == -1)
         return new LoraMessage {Status = MessageStatus.Receiving};
     if (idxStart != -1 && idxEnd != -1 && idxEnd <= idxStart)
         return new LoraMessage {Status = MessageStatus.Failed};
     if (idxStart == -1 || idxEnd == -1 || idxEnd <= idxStart) 
-        return new LoraMessage() {Status = MessageStatus.Failed};
+        return new LoraMessage {Status = MessageStatus.Failed};
     
-    var end = idxEnd + (LoraMessageUtils.EndPattern.Length );
-    var sp = raw.AsSpan(idxStart..end);
+    var end = idxEnd + (LoraMessageUtils.EndPattern.Length);
+    var sp = data.AsSpan(idxStart..end);
 
     return LoraMessageUtils.DeserializeWrapped(sp);
 }
@@ -110,6 +113,8 @@ LoraMessage HandleMessage()
 
 int IndexOfArg(string[] args, string arg)
 {
+    if (args.Length == 0) return -1;
+    
     for (int i = 0; i < arg.Length; i++)
     {
         if (string.Compare(args[i], arg, StringComparison.InvariantCultureIgnoreCase) == 0)

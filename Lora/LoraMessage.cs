@@ -16,5 +16,5 @@ public record LoraMessage
     public MessageStatus Status { get; set; }
     [JsonPropertyName("body")]
     public string Body { get; set; }
-    public uint Crc32 { get; }
+    public byte[] Crc32 { get; set; }
 }

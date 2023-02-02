@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Hashing;
 using System.Text;
 using System.Text.Json;
 
@@ -47,11 +48,15 @@ public static class LoraMessageUtils
 
     internal static byte[] SerializeMessage(string body, int userid, MessageStatus status)
     {
+        var bytes = Encoding.UTF8.GetBytes(body);
+        var hash = Crc32.Hash(bytes);
+
         return JsonSerializer.SerializeToUtf8Bytes(new LoraMessage()
         {
             Status = status,
             User = userid, 
-            Body = body
+            Body = body,
+            Crc32 = hash
         });
     }
 
@@ -85,6 +90,25 @@ public static class LoraMessageUtils
 
     public static LoraMessage DeserializeMessage(ReadOnlySpan<byte> msg) 
         => JsonSerializer.Deserialize<LoraMessage>(msg);
+
+    public static bool IsValidMessage(LoraMessage message)
+    {
+        if (message == null) throw new ArgumentNullException(nameof(message));
+        
+        var msgCrc = message.Crc32;
+        var bytes = Encoding.UTF8.GetBytes(message.Body);
+        var calcCrc = Crc32.Hash(bytes);
+
+        return IsEqualArray(msgCrc, calcCrc);
+    }
+
+    private static bool IsEqualArray<T>(T[] a, T[] b) where T : IEquatable<T>
+    {
+        if (a is null && b is null) return false;
+        if (a.Length != b.Length) return false;
+
+        return !a.Where((t, i) => t.Equals(b[i])).Any();
+    }
 
     public static ReadOnlySpan<byte> UnWrapMsg(this byte[] data)
     {
