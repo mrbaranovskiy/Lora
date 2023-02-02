@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -121,7 +122,31 @@ internal class CirBuffer<T> : IEnumerable<T>, IDisposable
             _rw.ExitWriteLock();
         }
     }
-   
+
+    public ReadOnlySpan<T> Peek(int len)
+    {
+        if (len <= 0) throw new ArgumentOutOfRangeException(nameof(len));
+        
+        _rw.EnterWriteLock();
+
+        var arr = ArrayPool<T>.Shared.Rent(len);
+
+        try
+        {
+            for (int i = 0; i < len; i++)
+            {
+                arr[i] = PeekItem(i);
+                return new Span<T>(arr);
+            }
+        }
+        catch (Exception)
+        {
+            _rw.ExitWriteLock();
+        }
+        
+        return ReadOnlySpan<T>.Empty;
+    }
+
     /// <summary> Gets item without removing. </summary>
     public T PeekItem(int indexFromTail)
     {

@@ -42,7 +42,7 @@ source
     
     try
     {
-        var data = _cib.Pop(_cib.DataLen);
+        var data = _cib.Peek(_cib.DataLen);
         
         var result = HandleMessage(data);
 
@@ -89,7 +89,7 @@ while (true)
     }
 }
 
-LoraMessage HandleMessage(byte[] data)
+LoraMessage HandleMessage(ReadOnlySpan<byte> data)
 {
     if (data == null) throw new ArgumentNullException(nameof(data));
     if (data.Length == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(data));
@@ -105,7 +105,7 @@ LoraMessage HandleMessage(byte[] data)
         return new LoraMessage {Status = MessageStatus.Failed};
     
     var end = idxEnd + (LoraMessageUtils.EndPattern.Length);
-    var sp = data.AsSpan(idxStart..end);
+    var sp = data[idxStart..end];
 
     return LoraMessageUtils.DeserializeWrapped(sp);
 }

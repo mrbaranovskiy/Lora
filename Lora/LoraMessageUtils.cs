@@ -35,6 +35,23 @@ public static class LoraMessageUtils
 
         return -1;
     }
+    
+    public static int IndexOfSubsequenceLast<T>(this ReadOnlySpan<T> source, T[] pattern)
+    {
+        if (pattern.Length > source.Length) return -1;
+        
+        for (var i = source.Length - 1; i >= pattern.Length - 1; i--)
+        {
+            var found = true;
+
+            for (var j = pattern.Length - 1; j >= 0 && found; j--)
+                found = source[i - (pattern.Length - j - 1)].Equals(pattern[j]);
+
+            if (found) return i - (pattern.Length - 1);
+        }
+
+        return -1;
+    }
 
     public static byte[] AckMessage(int userId)
     {
