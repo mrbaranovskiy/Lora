@@ -1,6 +1,7 @@
 ﻿using System.IO.Ports;
 using System.Reactive.Linq;
 using MCP.Communication.Misc;
+using MCP.Communication.TransportLayer;
 
 var portIndex = IndexOfArg(args, "port");
 
