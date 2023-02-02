@@ -129,17 +129,18 @@ internal class CirBuffer<T> : IEnumerable<T>, IDisposable
         
         _rw.EnterWriteLock();
 
-        var arr = ArrayPool<T>.Shared.Rent(len);
+        var arr = new T[len];
 
         try
         {
             for (int i = 0; i < len; i++)
             {
                 arr[i] = PeekItem(i);
-                return new Span<T>(arr);
             }
+            return new Span<T>(arr,0, len);
+            
         }
-        catch (Exception)
+        finally
         {
             _rw.ExitWriteLock();
         }
