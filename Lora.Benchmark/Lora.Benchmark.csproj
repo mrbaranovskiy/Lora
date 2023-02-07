@@ -5,19 +5,15 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <EnablePreviewFeatures>true</EnablePreviewFeatures>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.IO.Hashing" Version="7.0.0" />
-      <PackageReference Include="System.IO.Ports" Version="7.0.0" />
-      <PackageReference Include="System.Reactive" Version="5.0.0" />
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.4" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Lora.Communication\Lora.Communication.csproj" />
     </ItemGroup>
-    
+
 </Project>
-
-

@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora", "Lora\Lora.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora.Test", "Lora.Test\Lora.Test.csproj", "{F10C61EA-85D4-4A06-B7FE-5F7A6EDBD349}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora.Communication", "Lora.Communication\Lora.Communication.csproj", "{AB08B2F0-5627-419C-A99C-C56CD8F2ADCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lora.Benchmark", "Lora.Benchmark\Lora.Benchmark.csproj", "{43D9D295-6DDD-40E1-A3A1-0D2F2DB640F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{F10C61EA-85D4-4A06-B7FE-5F7A6EDBD349}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F10C61EA-85D4-4A06-B7FE-5F7A6EDBD349}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F10C61EA-85D4-4A06-B7FE-5F7A6EDBD349}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB08B2F0-5627-419C-A99C-C56CD8F2ADCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB08B2F0-5627-419C-A99C-C56CD8F2ADCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB08B2F0-5627-419C-A99C-C56CD8F2ADCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB08B2F0-5627-419C-A99C-C56CD8F2ADCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43D9D295-6DDD-40E1-A3A1-0D2F2DB640F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43D9D295-6DDD-40E1-A3A1-0D2F2DB640F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43D9D295-6DDD-40E1-A3A1-0D2F2DB640F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43D9D295-6DDD-40E1-A3A1-0D2F2DB640F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

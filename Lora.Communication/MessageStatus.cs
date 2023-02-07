@@ -1,4 +1,6 @@
-﻿namespace MCP.Communication.Misc;
+﻿using Aes = System.Runtime.Intrinsics.Arm.Aes;
+
+namespace MCP.Communication.Misc;
 
 public enum MessageStatus
 {
