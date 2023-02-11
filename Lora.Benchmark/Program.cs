@@ -4,12 +4,14 @@
 using System.Runtime.Intrinsics.X86;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
+using Lora;
 using MCP.Communication.Misc;
 
 BenchmarkDotNet.Running.BenchmarkRunner.Run<CrcBenchmark>();
 
 
 [SimpleJob(RuntimeMoniker.Net70, baseline: true)]
+[MemoryDiagnoser()]
 [RPlotExporter]
 public class CrcBenchmark
 {
@@ -20,43 +22,19 @@ public class CrcBenchmark
     {
         _data = new byte[N];
         new Random(42).NextBytes(_data);
+        var builder = new DatagramBuilder();
+        _initialStructureBytes = builder.BuildDatagram(42, 42, _data.AsSpan());
+        _builder = builder;
     }
 
-    [Params(32, 512)] public int N;
-
-
-    [Benchmark()]
-    public object FmaCrc()
+    [Params(32)] public int N;
+    private ReadOnlyMemory<byte> _initialStructureBytes;
+    private DatagramBuilder _builder;
+   
+    [Benchmark]
+    public object VectorizedCrc32_array()
     {
-        ulong crc = 0;
-        var ibStart = 0;
-        var cbSize = N;
-
-        while (cbSize >= 4)
-        {
-            crc = Fma.X64.Crc32(crc, BitConverter.ToUInt32(_data, ibStart));
-            ibStart += 4;
-            cbSize -= 4;
-        }
-
-        return (uint) crc;
-    }
-
-    [Benchmark()]
-    public object Sse42Crc()
-    {
-        ulong crc = 0;
-        var ibStart = 0;
-        var cbSize = N;
-
-        while (cbSize >= 4)
-        {
-            crc = Sse42.X64.Crc32(crc, BitConverter.ToUInt32(_data, ibStart));
-            ibStart += 4;
-            cbSize -= 4;
-        }
-
-        return (uint) crc;
+        return CrcHash.Crc32Aligned(_data);
     }
     
 }

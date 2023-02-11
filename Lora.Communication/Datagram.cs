@@ -20,15 +20,6 @@ internal unsafe struct Datagram
 {
     public uint Id;
     public ushort Destination;
-    public DataFrame Data;
+    public DataFrame Frame;
     public uint Crc32;
 }
-
-public static class DiagramBuilder
-{
-    public static byte[] BuildDatagram(uint id, ushort to, byte[] data)
-    {
-        return null;
-    }
-
-} 

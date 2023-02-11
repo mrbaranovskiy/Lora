@@ -10,11 +10,12 @@
     
     <ItemGroup>
         <PackageReference Include="System.IO.Hashing" Version="7.0.0" />
-       
+        <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
     
     <ItemGroup>
         <InternalsVisibleTo Include="Lora.Test" />
+        <InternalsVisibleTo Include="Lora.Benchmark" />
     </ItemGroup>
 
 </Project>

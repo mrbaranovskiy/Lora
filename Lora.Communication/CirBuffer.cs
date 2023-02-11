@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MCP.Communication.TransportLayer;
 
-internal class CirBuffer<T> : IEnumerable<T>, IDisposable
+public class CirBuffer<T> : IEnumerable<T>, IDisposable
 {
     private T[] _internalArray;
     private int _head;
@@ -33,7 +33,6 @@ internal class CirBuffer<T> : IEnumerable<T>, IDisposable
         _internalArray[_head] = item;
         _head = nextIdx;
     }
-
 
     public void Push(ReadOnlyMemory<T> memory)
     {
