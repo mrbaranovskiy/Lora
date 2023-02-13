@@ -11,8 +11,6 @@ using MCP.Communication.Misc;
 
 public record LoraMessage
 {
-    [JsonPropertyName("usr")]
-    public int User { get; set; }
     public MessageStatus Status { get; set; }
     [JsonPropertyName("body")]
     public string Body { get; set; }

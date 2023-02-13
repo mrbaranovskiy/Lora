@@ -36,7 +36,7 @@ public static class LoraMessageUtils
         return -1;
     }
     
-    public static int IndexOfSubsequenceLast<T>(this ReadOnlySpan<T> source, T[] pattern)
+    public static int IndexOfSubsequenceLast<T>(this ReadOnlySpan<T> source, T[] pattern) where T : struct
     {
         if (pattern.Length > source.Length) return -1;
         
@@ -71,7 +71,6 @@ public static class LoraMessageUtils
         return JsonSerializer.SerializeToUtf8Bytes(new LoraMessage()
         {
             Status = status,
-            User = userid, 
             Body = body,
             Crc32 = hash
         });
@@ -83,12 +82,12 @@ public static class LoraMessageUtils
         return WrapMsg(SerializeMessage(body, userId, status));
     }
 
-    public static LoraMessage DeserializeWrapped(byte[] buffer)
+    public static LoraMessage? DeserializeWrapped(byte[] buffer)
     {
         return DeserializeMessage(UnWrapMsg(buffer));
     }
     
-    public static LoraMessage DeserializeWrapped(ReadOnlySpan<byte> buffer)
+    public static LoraMessage? DeserializeWrapped(ReadOnlySpan<byte> buffer)
     {
         return DeserializeMessage(UnWrapMsg(buffer));
     }
@@ -105,7 +104,7 @@ public static class LoraMessageUtils
         return result;
     }
 
-    public static LoraMessage DeserializeMessage(ReadOnlySpan<byte> msg) 
+    public static LoraMessage? DeserializeMessage(ReadOnlySpan<byte> msg) 
         => JsonSerializer.Deserialize<LoraMessage>(msg);
 
     public static bool IsValidMessage(LoraMessage message)
@@ -119,10 +118,10 @@ public static class LoraMessageUtils
         return IsEqualArray(msgCrc, calcCrc);
     }
 
-    private static bool IsEqualArray<T>(T[] a, T[] b) where T : IEquatable<T>
+    private static bool IsEqualArray<T>(T[] a, T[] b) where T :struct, IEquatable<T> 
     {
         if (a is null && b is null) return false;
-        if (a.Length != b.Length) return false;
+        if (a != null && a.Length != b.Length) return false;
 
         return !a.Where((t, i) => t.Equals(b[i])).Any();
     }

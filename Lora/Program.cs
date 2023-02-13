@@ -46,30 +46,31 @@ source
         
         var result = HandleMessage(data);
 
-        switch (result.Status)
-        {
-            case MessageStatus.Send:
+        if (result != null)
+            switch (result.Status)
             {
-                Console.Out.WriteLine($"MSG: {result.Body}");
-                SendData(LoraMessageUtils.AckMessage(0));
-                _cib.RemoveAll();
-                break;
+                case MessageStatus.Send:
+                {
+                    Console.Out.WriteLine($"MSG: {result.Body}");
+                    SendData(LoraMessageUtils.AckMessage(0));
+                    _cib.RemoveAll();
+                    break;
+                }
+                case MessageStatus.Failed:
+                    break;
+                case MessageStatus.FailedReceived:
+                    Console.Out.WriteLine("Repeat");
+                    _cib.RemoveAll();
+                    break;
+                case MessageStatus.Ack:
+                    Console.Out.WriteLine("Message sent");
+                    _cib.RemoveAll();
+                    break;
+                case MessageStatus.Receiving:
+                    break;
             }
-            case MessageStatus.Failed:
-                break;
-            case MessageStatus.FailedReceived:
-                Console.Out.WriteLine("Repeat");
-                _cib.RemoveAll();
-                break;
-            case MessageStatus.Ack:
-                Console.Out.WriteLine("Message sent");
-                _cib.RemoveAll();
-                break;
-            case MessageStatus.Receiving:
-                break;
-        }
     }
-    catch (Exception e)
+    catch (Exception)
     {
         Console.WriteLine("general error!");
     }
@@ -89,7 +90,7 @@ while (true)
     }
 }
 
-LoraMessage HandleMessage(ReadOnlySpan<byte> data)
+LoraMessage? HandleMessage(ReadOnlySpan<byte> data)
 {
     if (data == null) throw new ArgumentNullException(nameof(data));
     if (data.Length == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(data));

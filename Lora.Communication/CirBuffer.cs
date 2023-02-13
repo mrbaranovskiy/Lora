@@ -143,8 +143,6 @@ public class CirBuffer<T> : IEnumerable<T>, IDisposable
         {
             _rw.ExitWriteLock();
         }
-        
-        return ReadOnlySpan<T>.Empty;
     }
 
     /// <summary> Gets item without removing. </summary>
